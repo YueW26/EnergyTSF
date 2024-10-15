@@ -8,7 +8,7 @@ from utils.timefeatures import time_features
 
 class Dataset_Opennem(Dataset_Custom):
     def __init__(self, root_path, flag='train', size=None,
-                 features='M', data_path='Merged_Data.csv',
+                 features='M', data_path='Merged_Data_cleaned.csv',
                  target='Day-ahead Price [EUR/MWh]', scale=True, timeenc=0, freq='month', seasonal_patterns=None):
         super().__init__(root_path, flag, size, features, data_path, target, scale, timeenc, freq, seasonal_patterns)
 
