@@ -1,11 +1,13 @@
 import argparse
 import os
 import torch
+from data_provider.data_factory import data_provider
 from exp.exp_long_term_forecasting import Exp_Long_Term_Forecast
 from exp.exp_imputation import Exp_Imputation
 from exp.exp_short_term_forecasting import Exp_Short_Term_Forecast
 from exp.exp_anomaly_detection import Exp_Anomaly_Detection
 from exp.exp_classification import Exp_Classification
+from exp.exp_stemgnn_forecasting import Exp_StemGNN_Forecast
 import random
 import numpy as np
 
@@ -69,7 +71,20 @@ def main():
                         help='time features encoding, options:[timeF, fixed, learned]')
     parser.add_argument('--activation', type=str, default='gelu', help='activation')
     parser.add_argument('--output_attention', action='store_true', help='whether to output attention in ecoder')
-
+    # StemGNN arguments
+    parser.add_argument('--stack_cnt', type=int, default=2)
+    parser.add_argument('--time_step', type=int, default=12, help="window size")
+    parser.add_argument('--multi_layer', type=int, default=5)
+    parser.add_argument('--horizon', type=int, default=3)
+    parser.add_argument('--dropout_rate', type=float, default=0.5)
+    parser.add_argument('--leaky_rate', type=float, default=0.2)
+    parser.add_argument('--norm_method', type=str, default='z_score')
+    parser.add_argument('--optimizer', type=str, default='RMSProp')
+    parser.add_argument('--lr', type=float, default=0.001)
+    parser.add_argument('--decay_rate', type=float, default=0.00001)
+    parser.add_argument('--early_stop', type=bool, default=False)
+    parser.add_argument('--exponential_decay_step', type=int, default=2)
+    parser.add_argument('--validate_freq', type=int, default=5)
     # optimization
     parser.add_argument('--num_workers', type=int, default=10, help='data loader num workers')
     parser.add_argument('--itr', type=int, default=1, help='experiments times')
@@ -94,7 +109,7 @@ def main():
 
     args = parser.parse_args()
     args.use_gpu = True if torch.cuda.is_available() and args.use_gpu else False
-
+    
     if args.use_gpu and args.use_multi_gpu:
         args.devices = args.devices.replace(' ', '')
         device_ids = args.devices.split(',')
@@ -117,6 +132,8 @@ def main():
     else:
         Exp = Exp_Long_Term_Forecast
 
+    if args.model == 'StemGNN':
+        Exp = Exp_StemGNN_Forecast
     if args.is_training:
         for ii in range(args.itr):
             # setting record of experiments
@@ -137,13 +154,24 @@ def main():
                 args.factor,
                 args.embed,
                 args.distil,
-                args.des, ii)
+                args.des, 
+                ii)
 
+            # Parameter for StemGNN
+            train_data, _ = data_provider(args, 'train')
+            print("Train data: ", train_data.data_x.shape)
+            args.units =  train_data.data_x.shape[1]#len(train_data)
+            
             exp = Exp(args)  # set experiments
             print('>>>>>>>start training : {}>>>>>>>>>>>>>>>>>>>>>>>>>>'.format(setting))
-            exp.train(setting)
-
+            if args.model == 'StemGNN':
+                exp.train(setting, args.units, args.norm_method, args.optimizer)
+            else:
+                exp.train(setting)
             print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
+            # Parameter for StemGNN
+            test_data, _ = data_provider(args, 'test')
+            exp.units = test_data.data_x.shape[1]#len(test_data)
             exp.test(setting)
             torch.cuda.empty_cache()
     else:
@@ -174,3 +202,4 @@ def main():
 
 if __name__ == "__main__":
     main()        
+# python3 run.py --task_name long_term_forecast --is_training 1 --root_path /pfs/work7/workspace/scratch/cc7738-subgraph_train/TAPE_gerrman/TAPE/core/Time-Series-Library-main-2/datasets --data_path Merged_Data_cleaned.csv --model_id Merged_Data_Transformer --model DLinear --data custom --features M --e_layers 2 --d_layers 1 --factor 3 --enc_in 18 --dec_in 18 --c_out 18 --des Merged_Data_Transformer --itr 1 --seq_len 48 --label_len 24 --pred_len 24 --batch_size 8 --train_epochs 3 --num_workers 8 --target "Day-ahead Price [EUR/MWh]" --learning_rate 1e-5 --stack_cnt 2 --time_step 12 --multi_layer 5 --horizon 3 --dropout_rate 0.5 --leaky_rate 0.2
