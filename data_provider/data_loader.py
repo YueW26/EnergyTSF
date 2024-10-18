@@ -9,7 +9,7 @@ from sklearn.preprocessing import StandardScaler
 from utils.timefeatures import time_features
 from data_provider.m4 import M4Dataset, M4Meta
 from data_provider.uea import subsample, interpolate_missing, Normalizer
-from sktime.utils import load_data
+# from sktime.utils import load_data
 import warnings
 
 

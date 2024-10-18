@@ -69,8 +69,8 @@ def main():
         model_id = 'Merged_Data_Transformer'
         model = 'DLinear'
         data = 'custom'
-        root_path = '/Users/wangbo/Documents/Time-Series-Library-git/Time-Series-Library-1/datasets'
-        data_path = 'Merged_cleaned_germany.csv'
+        root_path = '/hkfs/work/workspace/scratch/cc7738-subgraph_training/EnergyTSF_chen/datasets'
+        data_path = 'Merged_Data_germany.csv'
         features = 'M'
         seq_len = 48
         label_len = 24
