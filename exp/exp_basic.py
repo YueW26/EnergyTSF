@@ -142,7 +142,7 @@ if __name__ == "__main__":
     parser.add_argument('--task_name', type=str, default='long_term_forecast')
     parser.add_argument('--is_training', type=int, default=1)
     parser.add_argument('--root_path', type=str, default='/Users/wangbo/Documents/Time-Series-Library-git/Time-Series-Library-1/datasets')
-    parser.add_argument('--data_path', type=str, default='Merged_Data_cleaned.csv')
+    parser.add_argument('--data_path', type=str, default='Merged_cleaned_germany.csv')
     parser.add_argument('--model_id', type=str, default='Merged_Data_Transformer')
     parser.add_argument('--model', type=str, default='DLinear')
     parser.add_argument('--features', type=str, default='M')

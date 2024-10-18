@@ -70,7 +70,7 @@ def main():
         model = 'DLinear'
         data = 'custom'
         root_path = '/Users/wangbo/Documents/Time-Series-Library-git/Time-Series-Library-1/datasets'
-        data_path = 'Merged_Data_cleaned.csv'
+        data_path = 'Merged_cleaned_germany.csv'
         features = 'M'
         seq_len = 48
         label_len = 24
