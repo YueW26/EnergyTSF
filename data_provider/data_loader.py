@@ -220,6 +220,7 @@ class Dataset_Custom(Dataset):
 
         self.root_path = root_path
         self.data_path = data_path
+        self.flag = flag
         self.__read_data__()
 
     def __read_data__(self):
