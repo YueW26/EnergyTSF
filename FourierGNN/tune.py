@@ -15,8 +15,8 @@ from dataloader import Dataset_FourierGNN
 embed_sizes = [32,64,128,256,512]
 hidden_sizes = [32,64,128,256,512]
 learning_rates = [0.001, 0.0001, 0.00001]
-batch_sizes = [1024, 2,4,8,16,32,64,128]
-train_epochs = [1]
+batch_sizes = [2,4,8,16,32,64,128]
+train_epochs = [100]
 
 # Create CSV to log results
 csv_file = 'hyperparameter_tuning_results.csv'
