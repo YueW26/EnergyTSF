@@ -18,8 +18,13 @@ learning_rates = [0.001, 0.0001, 0.00001]
 batch_sizes = [2,4,8,16,32,64,128]
 train_epochs = [100]
 
-# Create CSV to log results
-csv_file = 'hyperparameter_tuning_results.csv'
+
+parser = argparse.ArgumentParser(description='fourier graph network for multivariate time series forecasting')
+parser.add_argument('--data', type=str, default='Merged_Data_germany', help='data set')
+parser.add_argument('--device', type=str, default='cuda:0', help='device')
+args = parser.parse_args()
+
+csv_file = os.path.join('output', args.data,'hyperparameter_tuning_results.csv')
 with open(csv_file, mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['embed_size', 'hidden_size', 'learning_rate', 'batch_size', 'train_loss', 'val_loss'])
@@ -62,8 +67,8 @@ def run_grid_search():
             f"Running for embed_size={embed_size}, hidden_size={hidden_size}, learning_rate={learning_rate}, batch_size={batch_size}, epochs={epochs}")
 
         # Prepare data
-        train_set = Dataset_FourierGNN(root_path='datasets', flag='train', data_path='Merged_Data_germany.csv')
-        val_set = Dataset_FourierGNN(root_path='datasets', flag='val')
+        train_set = Dataset_FourierGNN(root_path='datasets', flag='train', data_path=args.data + '.csv')
+        val_set = Dataset_FourierGNN(root_path='datasets', flag='val', data_path=args.data + '.csv')
         train_dataloader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=0, drop_last=False)
         val_dataloader = DataLoader(val_set, batch_size=batch_size, shuffle=False, num_workers=0, drop_last=False)
 

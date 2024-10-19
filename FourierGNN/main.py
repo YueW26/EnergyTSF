@@ -38,8 +38,8 @@ if not os.path.exists(result_test_file):
 
 # train val test
 train_set = Dataset_FourierGNN(root_path='datasets', flag='train', data_path = args.data + '.csv')
-test_set = Dataset_FourierGNN(root_path='datasets', flag='test')
-val_set = Dataset_FourierGNN(root_path='datasets', flag='val')
+test_set = Dataset_FourierGNN(root_path='datasets', flag='test', data_path = args.data + '.csv')
+val_set = Dataset_FourierGNN(root_path='datasets', flag='val', data_path = args.data + '.csv')
 
 train_dataloader = DataLoader(
     train_set,
