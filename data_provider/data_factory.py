@@ -4,9 +4,11 @@ from data_provider.data_loader import Dataset_ETT_hour, Dataset_ETT_minute, Data
 # from data_arrti import Dataset_Opennem
 from data_provider.data_Opennem import Dataset_Opennem #
 # from data_provider.data_Opennem_ETTm1 import Dataset_Opennem_ETTm1 #
-
+import os
 from data_provider.uea import collate_fn
 from torch.utils.data import DataLoader
+from data_provider.forecast_dataloader import *
+from data_provider.dataset import STAGNN_stamp_Dataset
 
 
 data_dict = {
@@ -36,7 +38,7 @@ def data_provider(args, flag):
     if flag == 'test':
         shuffle_flag = False
         drop_last = True
-        if args.task_name == 'anomaly_detection' or args.task_name == 'classification':
+        if args.task_name in ['anomaly_detection', 'classification']:
             batch_size = args.batch_size
         else:
             batch_size = 1  # bsz=1 for evaluation
@@ -55,13 +57,6 @@ def data_provider(args, flag):
             flag=flag,
         )
         print(flag, len(data_set))
-        data_loader = DataLoader(
-            data_set,
-            batch_size=batch_size,
-            shuffle=shuffle_flag,
-            num_workers=args.num_workers,
-            drop_last=drop_last)
-        return data_set, data_loader
     elif args.task_name == 'classification':
         drop_last = False
         data_set = Data(
@@ -70,15 +65,23 @@ def data_provider(args, flag):
         )
         print(flag, len(data_set))
         print(f"Classification: flag={flag}, len(data_set)={len(data_set)}")
-        data_loader = DataLoader(
-            data_set,
-            batch_size=batch_size,
-            shuffle=shuffle_flag,
-            num_workers=args.num_workers,
-            drop_last=drop_last,
-            collate_fn=lambda x: collate_fn(x, max_len=args.seq_len)
+    elif args.task_name == 'forecasting': # For StemGNN
+        if flag == 'train':
+            df = args.data_train
+        elif flag == 'val':
+            df = args.data_val
+        else:
+            df = args.data_test
+        
+        data_set = ForecastDataset(
+            df,
+            window_size=args.window_size,
+            horizon=args.horizon,
+            normalize_method=args.norm_method,
+            norm_statistic=args.norm_statistic,
         )
-        return data_set, data_loader
+        
+        print(flag, len(data_set))
     else:
         if args.data == 'm4':
             drop_last = False
@@ -95,11 +98,14 @@ def data_provider(args, flag):
         )
         print(flag, len(data_set))
         print(f"Other tasks: flag={flag}, data_set length before DataLoader: {len(data_set)}")
-        data_loader = DataLoader(
-            data_set,
-            batch_size=batch_size,
-            shuffle=shuffle_flag,
-            num_workers=args.num_workers,
-            drop_last=drop_last)
-        print(f"DataLoader created: batch_size={batch_size}, shuffle_flag={shuffle_flag}, drop_last={drop_last}")
-        return data_set, data_loader
+
+    data_loader = DataLoader(
+        data_set,
+        batch_size=batch_size,
+        shuffle=shuffle_flag,
+        num_workers=args.num_workers,
+        drop_last=drop_last
+    )
+
+    print(f"DataLoader created: batch_size={batch_size}, shuffle_flag={shuffle_flag}, drop_last={drop_last}")
+    return data_set, data_loader

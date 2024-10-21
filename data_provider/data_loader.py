@@ -10,8 +10,9 @@ from utils.timefeatures import time_features
 from data_provider.m4 import M4Dataset, M4Meta
 from data_provider.uea import subsample, interpolate_missing, Normalizer
 # from sktime.utils import load_data
-import warnings
+from sktime.datasets import load_from_tsfile_to_dataframe
 
+import warnings
 
 warnings.filterwarnings('ignore')
 
@@ -278,10 +279,10 @@ class Dataset_Custom(Dataset):
         r_begin = s_end - self.label_len
         r_end = r_begin + self.label_len + self.pred_len
 
-        seq_x = self.data_x[s_begin:s_end]
-        seq_y = self.data_y[r_begin:r_end]
-        seq_x_mark = self.data_stamp[s_begin:s_end]
-        seq_y_mark = self.data_stamp[r_begin:r_end]
+        seq_x = self.data_x[s_begin:s_end].astype(np.float32)
+        seq_y = self.data_y[r_begin:r_end].astype(np.float32)
+        seq_x_mark = self.data_stamp[s_begin:s_end].astype(np.float32)
+        seq_y_mark = self.data_stamp[r_begin:r_end].astype(np.float32)
 
         return seq_x, seq_y, seq_x_mark, seq_y_mark
 
@@ -662,7 +663,7 @@ class UEAloader(Dataset):
         return all_df, labels_df
 
     def load_single(self, filepath):
-        df, labels = load_data.load_from_tsfile_to_dataframe(filepath, return_separate_X_and_y=True,
+        df, labels = load_from_tsfile_to_dataframe(filepath, return_separate_X_and_y=True,
                                                              replace_missing_vals_with='NaN')
         labels = pd.Series(labels, dtype="category")
         self.class_names = labels.cat.categories
