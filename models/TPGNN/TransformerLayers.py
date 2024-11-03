@@ -31,20 +31,21 @@ class ScaledDotProductAttention(nn.Module):
 
     def __init__(self, drop_prob=0):
         super().__init__()
-        # self.temperature = temperature
         self.dropout = nn.Dropout(drop_prob)
 
     def forward(self, q, k, v, mask=None):
-        # b, t, d_emb = q.shape
         d_emb = q.shape[-1]
         attn = torch.matmul(q / d_emb**0.5, k.transpose(2, 3))
+
         if mask is not None:
-            # print(mask[0, 0, :, :])
             attn = attn.masked_fill(mask == 0, -1e9)
 
-            # print(attn[0, 0, :, :])
-            # sys.exit()
         attn = self.dropout(F.softmax(attn, dim=-1))
+
+        # 确保 v 的形状
+        if v.dim() == 2:  # 如果 v 是 [batch_size, n_attr]
+            v = v.unsqueeze(1)  # 添加维度
+
         output = torch.matmul(attn, v)
         return output, attn
 
@@ -78,22 +79,17 @@ class MultiHeadAttention(nn.Module):
         d_k, d_v, n_head = self.d_k, self.d_v, self.n_head
         sz_b, len_q, len_k, len_v = q.size(0), q.size(1), k.size(1), v.size(1)
         residual = q
-        # Pass through the pre-attention projection: b x lq x (n*dv)
-        # Separate different heads: b x lq x n x dv
+        
+        # Pass through the pre-attention projection
         q = self.w_qs(q).view(sz_b, len_q, n_head, d_k)
         k = self.w_ks(k).view(sz_b, len_k, n_head, d_k)
         v = self.w_vs(v).view(sz_b, len_v, n_head, d_v)
 
-        # Transpose for attention dot product: b x n x lq x dv
+        # Transpose for attention dot product
         q, k, v = q.transpose(1, 2), k.transpose(1, 2), v.transpose(1, 2)
 
         q, _ = self.attention(q, k, v, mask=mask)
 
-        # Transpose to move the head dimension back: b x lq x n x dv
-        # Combine the last two dimensions to concatenate all the heads together: b x lq x (n*dv)
+        # Transpose to move the head dimension back
         q = q.transpose(1, 2).contiguous().view(sz_b, len_q, -1)
-        q = self.dropout(self.fc(q))
-        q += residual
-        q = self.norm(q)
-        q = q.contiguous().view(b_q, n_q, t_q, k_q)
-        return q
+        q

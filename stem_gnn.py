@@ -15,7 +15,7 @@ parser.add_argument('--horizon', type=int, default=3)
 parser.add_argument('--train_length', type=float, default=7)
 parser.add_argument('--valid_length', type=float, default=2)
 parser.add_argument('--test_length', type=float, default=1)
-parser.add_argument('--epoch', type=int, default=50)
+parser.add_argument('--epoch', type=int, default=5)
 parser.add_argument('--lr', type=float, default=1e-4)
 parser.add_argument('--multi_layer', type=int, default=5)
 parser.add_argument('--device', type=str, default='cpu')
@@ -103,5 +103,9 @@ if __name__ == '__main__':
         print(f'Evaluation took {(after_evaluation - before_evaluation) / 60} minutes')
     print('done')
     
+# --device cuda:0
+# python stem_gnn.py --train True --evaluate True --dataset Merged_Data_germany --window_size 12 --horizon 3 --norm_method z_score --train_length 7 --valid_length 2 --test_length 1 --root_path /Users/wangbo/EnergyTSF-2/datasets/ --device cpu --data custom --task_name forecasting --data_path  Merged_Data_germany.csv --target "Day-ahead Price [EUR/MWh]"
 
-# python3 stem_gnn.py --train True --evaluate True --dataset PeMS07 --window_size 12 --horizon 3 --norm_method z_score --train_length 7 --valid_length 2 --test_length 1 --root_path /pfs/work7/workspace/scratch/cc7738-subgraph_train/TAPE_gerrman/TAPE/core/Time-Series-Library-main-2/datasets --device cuda:0 --data custom --task_name forecasting --data_path  PeMS07.csv --target "Day-ahead Price [EUR/MWh]"
+
+# python stemgnn_run.py --train True --evaluate True --dataset Merged_Data_germany --window_size 12 --horizon 3 --norm_method z_score --train_length 7 --valid_length 2 --test_length 1 --root_path /Users/wangbo/EnergyTSF-2/datasets/ --device cpu --data custom --task_name forecasting --data_path Merged_Data_germany.csv --target "Day-ahead Price [EUR/MWh]" | tee output_stemgnn_log.txt
+# python stem_gnn.py --train True --evaluate True --dataset Merged_Data_germany --window_size 12 --horizon 3 --norm_method z_score --train_length 7 --valid_length 2 --test_length 1 --root_path /Users/wangbo/EnergyTSF-2/datasets/ --device cpu --data custom --task_name forecasting --data_path Merged_Data_germany.csv --target "Day-ahead Price [EUR/MWh]" > output_log.txt 2>&1

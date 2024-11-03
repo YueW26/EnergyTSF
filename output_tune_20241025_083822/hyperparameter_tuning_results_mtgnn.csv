@@ -1,0 +1,9 @@
+embed_size,hidden_size,learning_rate,batch_size,epochs,val_loss,val_rae,val_corr,test_acc,test_rae,test_corr
+32,128,0.001,16,3,tensor(0.0606),tensor(0.0474),0.93664247,tensor(0.0641),tensor(0.0495),0.95519304
+32,128,0.001,128,3,tensor(0.0585),tensor(0.0433),0.93753237,tensor(0.0587),tensor(0.0432),0.95602316
+32,128,0.0001,16,3,tensor(0.0590),tensor(0.0427),0.93587285,tensor(0.0575),tensor(0.0407),0.9552195
+32,128,0.0001,128,3,tensor(0.0753),tensor(0.0542),0.9318826,tensor(0.0727),tensor(0.0510),0.9502777
+128,128,0.001,16,3,tensor(0.0522),tensor(0.0386),0.9386659,tensor(0.0526),tensor(0.0375),0.95469844
+128,128,0.001,128,3,tensor(0.0590),tensor(0.0423),0.93821603,tensor(0.0570),tensor(0.0411),0.95627695
+128,128,0.0001,16,3,tensor(0.0559),tensor(0.0414),0.9367636,tensor(0.0559),tensor(0.0397),0.9557574
+128,128,0.0001,128,3,tensor(0.0736),tensor(0.0550),0.9325316,tensor(0.0705),tensor(0.0507),0.9505189

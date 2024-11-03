@@ -30,6 +30,8 @@ class ConvExpandAttr(nn.Module):
         return x
 
 
+
+
 class SpatioEnc(nn.Module):
     def __init__(
         self,
@@ -67,13 +69,26 @@ class TempoEnc(nn.Module):
         self.enc = nn.Embedding(n_time, n_attr)
         self.no = normal
         self.norm = nn.LayerNorm(n_attr, eps=1e-6)
-
+    '''
     def forward(self, x, start=0, t_left=None):
         length = x.shape[-2]
         if t_left == None:
             enc = self.enc(torch.arange(start, start + length).cuda())
         else:
             enc = self.enc(torch.Tensor(t_left).long().cuda())
+        x = x + enc
+        if self.no:
+            x = self.norm(x)
+        return x
+    '''
+
+    def forward(self, x, start=0, t_left=None, device="cpu"):
+        length = x.shape[-2]
+        if t_left is None:
+            enc = self.enc(torch.arange(start, start + length).to(device))
+        else:
+            enc = self.enc(torch.tensor(t_left).long().to(device))
+        
         x = x + enc
         if self.no:
             x = self.norm(x)
