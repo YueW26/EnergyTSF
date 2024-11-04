@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-data_path='Users/wangbo/EnergyTSF-2/datasets/V_228.csv' #path to the MTS data
+data_path='/home/kit/aifb/cc7738/scratch/EnergyTSF/datasets/V_228.csv' #path to the MTS data
 cycle=$((12*24)) #12 samples an hour, 24 hour a day
-data_root='Users/wangbo/EnergyTSF-2/datasets' #Directory to the MTS data
+data_root='/home/kit/aifb/cc7738/scratch/EnergyTSF/datasets' #Directory to the MTS data
 #preparing dataset stamp
-python /Users/wangbo/EnergyTSF-2/data_provider/data_process.py gen_stamp --data_path=$data_path --cycle=$cycle --data_root=$data_root
+python /home/kit/aifb/cc7738/scratch/EnergyTSF/data_provider/data_process.py gen_stamp --data_path=$data_path --cycle=$cycle --data_root=$data_root
 
-data_path='datasets/PeMS/Merged_Data_germany.csv' #path to the MTS data
+data_path='/home/kit/aifb/cc7738/scratch/EnergyTSF/datasets/V_228.csv' #path to the MTS data
 # adj_path='datasets/PeMS/W_228.csv'  #path to the adjacency matrix, None if not exists
-data_root='Users/wangbo/EnergyTSF-2/datasets' #Directory to the MTS data
+data_root='/home/kit/aifb/cc7738/scratch/EnergyTSF/datasets' #Directory to the MTS data
 
 stamp_path="${data_root}/time_stamp.npy"
 #training model

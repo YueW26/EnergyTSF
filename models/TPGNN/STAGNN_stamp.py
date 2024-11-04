@@ -10,6 +10,7 @@ import random
 class SrcProcess(nn.Module):
     def __init__(self, opt):
         super().__init__()
+        self.opt = opt
         n_his = opt.n_his
         n_route, n_attr = opt.n_route, opt.n_attr
 
@@ -39,6 +40,7 @@ class SrcProcess(nn.Module):
     def forward(self, src, stamp):
         src = self.enc_exp(src)
         b, n, t, k = src.shape
+        
         if self.SE:
             src = self.enc_spa_enco(src)
         if self.TE:
@@ -180,6 +182,7 @@ class STAGNN_stamp(nn.Module):
         dec_output = None
         if self.T4N and epoch < self.T4N_end:
             for i in range(self.T4N_step):
+                
                 dec_input = self.trg_pro(trg, enc_output_4head)
 
                 dec_output = self.decoder(dec_input, enc_output)
@@ -194,10 +197,16 @@ class STAGNN_stamp(nn.Module):
 
                 dec_output = self.dec_rdu(dec_output)
                 trg = dec_output[:, :, 1:, :]
-
-                loss = loss + \
-                    torch.abs(label[:, :, i:i+self.n_pred, :] -
-                              dec_output[:, :, :-1, :]).mean()
+                
+                # print(label[:, :, i:i+self.n_pred, :].shape, dec_output[:, :, :-1, :].shape)
+                # Mistmatch second dimension!!!
+                if i + self.n_pred > label.size(2):
+                    min_idx = min(label.shape[2], dec_output.shape[2])
+                    loss = loss + torch.abs(label[:, :, :min_idx, :] - dec_output[:, :, :min_idx, :]).mean()
+                else:
+                    loss = loss + \
+                        torch.abs(label[:, :, i:i+self.n_pred, :] -
+                                  dec_output[:, :, :-1, :]).mean()
             A = self.encoder.layer_stack[0].stgc.r1@self.encoder.layer_stack[0].stgc.r1.T
             A_loss = (((A**2).sum())**0.5-self.n_c**0.5)**2
             loss = loss+self.reg_A*A_loss
