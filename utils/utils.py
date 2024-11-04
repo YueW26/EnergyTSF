@@ -3,7 +3,7 @@ import torch.nn as nn
 import numpy as np
 import pandas as pd
 import math
-from models.TPGNN import predict, predict_stamp
+from models.TPGNN.predict import predict, predict_stamp
 
 
 def masked_mse(preds, labels, null_val=np.nan):

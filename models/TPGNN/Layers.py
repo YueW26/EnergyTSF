@@ -61,10 +61,9 @@ class TempoEnc(nn.Module):
         self,
         n_time,
         n_attr,
-        normal=True
+        normal=True,
     ):
         super().__init__()
-
         self.time = n_time
         self.enc = nn.Embedding(n_time, n_attr)
         self.no = normal
@@ -82,10 +81,13 @@ class TempoEnc(nn.Module):
         return x
     '''
 
-    def forward(self, x, start=0, t_left=None, device="cpu"):
+    def forward(self, x, start=0, t_left=None):
         length = x.shape[-2]
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
         if t_left is None:
-            enc = self.enc(torch.arange(start, start + length).to(device))
+            res = torch.arange(start, start + length).to(device)
+            enc = self.enc(res)
         else:
             enc = self.enc(torch.tensor(t_left).long().to(device))
         
@@ -138,6 +140,7 @@ class EncoderLayer_stamp(nn.Module):
         self.tem_mask = tem_mask
         assert opt.STstamp['use'], "encoder_stamp requires time stamp as input."
         kt, droprate, temperature = opt.STstamp['kt'], opt.drop_prob, opt.STstamp['temperature']
+
         self.stgc = TPGNN(n_attr, n_attr, n_route,n_his, dis_mat, kt, opt.n_c, droprate, temperature)
        
         self.pos_ff1 = PositionwiseFeedForward(n_attr, n_hid, opt.drop_prob)

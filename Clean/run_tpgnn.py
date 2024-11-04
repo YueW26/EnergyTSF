@@ -1,4 +1,5 @@
-import os
+import os, sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import numpy as np
 import pandas as pd
 import torch
@@ -44,15 +45,15 @@ def preprocess_data(data_path, data_root):
 
 def train_model():
     # 设置数据路径和模型配置
-    data_path = '/Users/wangbo/EnergyTSF-2/datasets/Merged_Data_germany.csv'
-    data_root = '/Users/wangbo/EnergyTSF-2/datasets'
+    data_path = '/home/kit/aifb/cc7738/scratch/EnergyTSF/datasets/Merged_Data_germany.csv'
+    data_root = '/home/kit/aifb/cc7738/scratch/EnergyTSF/datasets/'
     
     # 数据预处理，获取 n_route
     processed_data_path, stamp_path, n_route = preprocess_data(data_path, data_root)
     
     # 设置模型配置参数
     opt = DefaultConfig()
-    opt.device = 'cpu'  # 可以根据需要设置为 'cuda' 或 'cpu'
+    opt.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')  # 可以根据需要设置为 'cuda' 或 'cpu'
     opt.n_route = n_route  # 动态设置为数据集的特征数
     opt.n_his = 12  # 历史步长
     opt.n_pred = 12  # 预测步长
@@ -100,6 +101,8 @@ def train_model():
         for x, stamp, y in train_loader:
             x, stamp, y = x.to(opt.device), stamp.to(opt.device).long(), y.to(opt.device)  # 将 stamp 转换为 long
             optimizer.zero_grad()
+            # print(f"x shape: {x.shape}, stamp shape: {stamp.shape}, y shape: {y.shape}")
+            # print(f"x: {x.shape if x is not None else None}, stamp: {stamp.shape if stamp is not None else None}, y: {y.shape if y is not None else None}")
             y_pred = model(x, stamp, y, epoch)
 
             # 检查 y_pred 是否是 tuple，如果是，取第一个元素
@@ -152,6 +155,14 @@ def train_model():
     with torch.no_grad():
         for x, stamp, y in test_loader:
             x, stamp, y = x.to(opt.device), stamp.to(opt.device).long(), y.to(opt.device)
+            # x = x.type(torch.cuda.FloatTensor)
+            # stamp = stamp.type(torch.cuda.LongTensor)
+            # y = y.type(torch.cuda.FloatTensor)
+
+            # x = x.repeat(2, 1, 1, 1)
+            # stamp = stamp.repeat(2, 1)
+            # y = y.repeat(2, 1, 1, 1)
+            
             y_pred = model(x, stamp, y, epoch)
 
             if isinstance(y_pred, tuple):

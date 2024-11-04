@@ -92,4 +92,9 @@ class MultiHeadAttention(nn.Module):
 
         # Transpose to move the head dimension back
         q = q.transpose(1, 2).contiguous().view(sz_b, len_q, -1)
-        q
+        q = q.transpose(1, 2).contiguous().view(sz_b, len_q, -1)
+        q = self.dropout(self.fc(q))
+        q += residual
+        q = self.norm(q)
+        q = q.contiguous().view(b_q, n_q, t_q, k_q)
+        return q
