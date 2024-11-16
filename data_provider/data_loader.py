@@ -9,10 +9,9 @@ from sklearn.preprocessing import StandardScaler
 from utils.timefeatures import time_features
 from data_provider.m4 import M4Dataset, M4Meta
 from data_provider.uea import subsample, interpolate_missing, Normalizer
-# from sktime.utils import load_data
-from sktime.datasets import load_from_tsfile_to_dataframe
-
+from sktime.utils import load_data
 import warnings
+
 
 warnings.filterwarnings('ignore')
 
@@ -196,7 +195,7 @@ class Dataset_ETT_minute(Dataset):
 
 class Dataset_Custom(Dataset):
     def __init__(self, root_path, flag='train', size=None,
-                 features='S', data_path='Merged_cleaned_germany.csv',
+                 features='S', data_path='ETTh1.csv',
                  target='OT', scale=True, timeenc=0, freq='h', seasonal_patterns=None):
         # size [seq_len, label_len, pred_len]
         # info
@@ -221,7 +220,6 @@ class Dataset_Custom(Dataset):
 
         self.root_path = root_path
         self.data_path = data_path
-        self.flag = flag
         self.__read_data__()
 
     def __read_data__(self):
@@ -279,10 +277,10 @@ class Dataset_Custom(Dataset):
         r_begin = s_end - self.label_len
         r_end = r_begin + self.label_len + self.pred_len
 
-        seq_x = self.data_x[s_begin:s_end].astype(np.float32)
-        seq_y = self.data_y[r_begin:r_end].astype(np.float32)
-        seq_x_mark = self.data_stamp[s_begin:s_end].astype(np.float32)
-        seq_y_mark = self.data_stamp[r_begin:r_end].astype(np.float32)
+        seq_x = self.data_x[s_begin:s_end]
+        seq_y = self.data_y[r_begin:r_end]
+        seq_x_mark = self.data_stamp[s_begin:s_end]
+        seq_y_mark = self.data_stamp[r_begin:r_end]
 
         return seq_x, seq_y, seq_x_mark, seq_y_mark
 
@@ -663,7 +661,7 @@ class UEAloader(Dataset):
         return all_df, labels_df
 
     def load_single(self, filepath):
-        df, labels = load_from_tsfile_to_dataframe(filepath, return_separate_X_and_y=True,
+        df, labels = load_data.load_from_tsfile_to_dataframe(filepath, return_separate_X_and_y=True,
                                                              replace_missing_vals_with='NaN')
         labels = pd.Series(labels, dtype="category")
         self.class_names = labels.cat.categories

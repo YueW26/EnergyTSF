@@ -1,0 +1,6 @@
+Batch Size: 8
+Total Training Time: 0.16 hours
+Test Results for long_term_forecast_test_DLinear_0:
+MSE: 0.427635, MAE: 0.355568, RMSE: 0.653938, MAPE: 2.043779
+Inference Time: 121.17 seconds
+

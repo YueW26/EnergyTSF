@@ -1,3 +1,9 @@
+# exp_short_term_forecasting.py：用于短时间序列预测，通常适用于频率更高的任务。
+# 例如在M4数据集中，这个文件会根据不同的seasonal_patterns（如每小时、每天等）动态调整预测长度（pred_len）和输入序列长度（seq_len）。
+# 例如，通过 M4Meta.horizons_map 动态设定 pred_len 的大小，这个值决定了模型在短时间范围内进行预测。
+
+# 依赖更多的辅助模块，例如 m4_summary 和 m4 数据相关的元数据类 M4Meta，不仅可以进行短时间序列预测，还支持对 m4 数据集的多任务模式分析，包括不同频率的预测需求。
+
 from data_provider.data_factory import data_provider
 from data_provider.m4 import M4Meta
 from exp.exp_basic import Exp_Basic
@@ -19,7 +25,10 @@ warnings.filterwarnings('ignore')
 class Exp_Short_Term_Forecast(Exp_Basic):
     def __init__(self, args):
         super(Exp_Short_Term_Forecast, self).__init__(args)
-
+    
+    # 根据 args.data 是否为 m4 数据集来决定是否动态调整预测长度 
+    # pred_len、输入序列长度 seq_len 以及频率映射 frequency_map。
+    # args.seasonal_patterns 可以决定时间序列的季节性特征（例如每小时、每天等），并将相关信息传递给模型。
     def _build_model(self):
         if self.args.data == 'm4':
             self.args.pred_len = M4Meta.horizons_map[self.args.seasonal_patterns]  # Up to M4 config
@@ -39,7 +48,10 @@ class Exp_Short_Term_Forecast(Exp_Basic):
     def _select_optimizer(self):
         model_optim = optim.Adam(self.model.parameters(), lr=self.args.learning_rate)
         return model_optim
-
+    
+    # 由于 m4 数据集的存在，文件包含了更丰富的损失函数选择，包括 MSE、MAPE、MASE 和 SMAPE。
+    # 通过 _select_criterion 函数，可以根据参数来选择不同的损失函数，以适应不同的短期预测需求。
+    # 这些损失函数反映了对预测准确性的不同考量，例如在金融预测或销量预测任务中常用SMAPE和MAPE来衡量相对误差。
     def _select_criterion(self, loss_name='MSE'):
         if loss_name == 'MSE':
             return nn.MSELoss()
@@ -126,6 +138,7 @@ class Exp_Short_Term_Forecast(Exp_Basic):
 
         return self.model
 
+    # 由于 m4 数据集的存在，vali 函数有一些特定的逻辑，例如使用 frequency_map 动态获取预测数据，验证函数中通过 last_insample_window 函数获取验证窗口。
     def vali(self, train_loader, vali_loader, criterion):
         x, _ = train_loader.dataset.last_insample_window()
         y = vali_loader.dataset.timeseries
@@ -157,6 +170,7 @@ class Exp_Short_Term_Forecast(Exp_Basic):
         self.model.train()
         return loss
 
+    # test 函数在预测完成后会将预测结果保存为 CSV 文件，并提供了对所有 m4 任务（如周预测、月预测等）结果的评价和分析支持，例如 SMAPE、OWA、MAPE 和 MASE 指标计算。
     def test(self, setting, test=0):
         _, train_loader = self._get_data(flag='train')
         _, test_loader = self._get_data(flag='test')

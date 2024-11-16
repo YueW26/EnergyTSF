@@ -45,8 +45,8 @@ def preprocess_data(data_path, data_root):
 
 def train_model():
     # 设置数据路径和模型配置
-    data_path = '/home/kit/aifb/cc7738/scratch/EnergyTSF/datasets/Merged_Data_germany.csv'
-    data_root = '/home/kit/aifb/cc7738/scratch/EnergyTSF/datasets/'
+    data_path = '/Users/wangbo/EnergyTSF-3/datasets/Merged_Data_germany.csv'
+    data_root = '/Users/wangbo/EnergyTSF-3/datasets/'#/home/kit/aifb/cc7738/scratch/EnergyTSF/datasets/
     
     # 数据预处理，获取 n_route
     processed_data_path, stamp_path, n_route = preprocess_data(data_path, data_root)

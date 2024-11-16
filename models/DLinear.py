@@ -54,27 +54,32 @@ class Model(nn.Module):
 
     def encoder(self, x):
         seasonal_init, trend_init = self.decompsition(x)
-        seasonal_init, trend_init = seasonal_init.permute(
-            0, 2, 1), trend_init.permute(0, 2, 1)
+        seasonal_init, trend_init = seasonal_init.permute(0, 2, 1), trend_init.permute(0, 2, 1)
+        
         if self.individual:
             seasonal_output = torch.zeros([seasonal_init.size(0), seasonal_init.size(1), self.pred_len],
-                                          dtype=seasonal_init.dtype).to(seasonal_init.device)
+                                        dtype=seasonal_init.dtype).to(seasonal_init.device)
             trend_output = torch.zeros([trend_init.size(0), trend_init.size(1), self.pred_len],
-                                       dtype=trend_init.dtype).to(trend_init.device)
+                                    dtype=trend_init.dtype).to(trend_init.device)
             for i in range(self.channels):
-                seasonal_output[:, i, :] = self.Linear_Seasonal[i](
-                    seasonal_init[:, i, :])
-                trend_output[:, i, :] = self.Linear_Trend[i](
-                    trend_init[:, i, :])
+                seasonal_output[:, i, :] = self.Linear_Seasonal[i](seasonal_init[:, i, :])
+                trend_output[:, i, :] = self.Linear_Trend[i](trend_init[:, i, :])
         else:
+            # 统一 seasonal_init 和 trend_init 的数据类型
+            seasonal_init = seasonal_init.type_as(self.Linear_Seasonal.weight)  
+            trend_init = trend_init.type_as(self.Linear_Trend.weight)  # 确保 trend_init 类型一致
+
             seasonal_output = self.Linear_Seasonal(seasonal_init)
             trend_output = self.Linear_Trend(trend_init)
+        
         x = seasonal_output + trend_output
         return x.permute(0, 2, 1)
+
 
     def forecast(self, x_enc):
         # Encoder
         return self.encoder(x_enc)
+    # 在这里，forecast方法只调用了 encoder 方法，将分解和线性转换的工作都交给了 encoder，并最终直接输出预测结果。
 
     def imputation(self, x_enc):
         # Encoder

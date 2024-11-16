@@ -75,7 +75,7 @@ class TPGNN(nn.Module):
         # 计算 z 和 z_fix
         z = (x @ w_stack[0]) * (temp_1[:, 0].reshape(b, 1, 1, 1))
         z = z.permute(0, 2, 1, 3).reshape(b * t, n, -1)
-        for i in range(1, self.kt)
+        for i in range(1, self.kt):
             
             z = adj_1 @ z + (x @ w_stack[i] * (temp_1[:, i].reshape(b, 1, 1, 1))).permute(0, 2, 1, 3).reshape(b * t, n, -1)
 
