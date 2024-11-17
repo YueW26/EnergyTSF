@@ -1,3 +1,5 @@
+import os, sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import torch
 import torch.nn as nn
 import numpy as np
@@ -9,14 +11,15 @@ from torch.utils.data import Dataset, DataLoader
 from tensorboardX import SummaryWriter
 import pandas as pd
 import logging
-from models.TPGNN import TPGNN, predict, predict_stamp
+from models.TPGNN.SubLayers import TPGNN
+from models.TPGNN.predict import predict, predict_stamp
 from utils.utils import evaluate_metric
 from config import DefaultConfig
 
 # 配置参数
 opt = DefaultConfig()
 opt.device = 'cpu'  # 使用CPU
-opt.data_path = '/Users/wangbo/EnergyTSF-2/datasets/Merged_Data_germany.csv'
+opt.data_path = '/home/kit/aifb/cc7738/scratch/EnergyTSF/datasets/Merged_Data_germany.csv' #/Users/wangbo/EnergyTSF-2/datasets/Merged_Data_germany.csv'
 opt.n_his = 12  # 历史步长
 opt.n_pred = 1  # 预测步长
 opt.batch_size = 50  # 批量大小
@@ -51,8 +54,10 @@ class MergedDataDataset(Dataset):
         x = self.data.iloc[idx: idx + self.seq_length].values
         y = self.data.iloc[idx + self.seq_length: idx + self.seq_length + self.pred_length].values
         stamp = np.arange(self.pred_length)
-
+        stamp = torch.tensor(stamp, dtype=torch.long).unsqueeze(0)
+        
         x = torch.tensor(x, dtype=torch.float32).unsqueeze(1)  # [seq_length, 1, n_attr]
+        print('y: ', y.shape)
         stamp = torch.tensor(stamp, dtype=torch.long)  # [pred_length]
         y = torch.tensor(y, dtype=torch.float32)
 
@@ -106,9 +111,11 @@ def train(**kwargs):
         for x, stamp, y in train_loader:
             if x.dim() == 3:
                 x = x.permute(0, 2, 1)
-
+            
+            # if stamp.dim() == 2:
+            #     stamp = stamp.unsqueeze(-1)
             print(f"x shape: {x.shape}, stamp shape: {stamp.shape}, y shape: {y.shape}")
-
+            return 0
             y_pred, loss = model(x, stamp)
             optimizer.zero_grad()
             loss.backward()

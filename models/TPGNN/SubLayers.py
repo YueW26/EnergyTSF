@@ -47,12 +47,16 @@ class TPGNN(nn.Module):
 
     def forward(self, x, stamp):
         # x: (b, n, t, k), stamp: (b, t, k)
+        
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        
         residual = x
         b, n, t, k = x.size()
         h, _, _ = self.w_stack.shape
         w_stack = self.w_stack / matrix_fnorm(self.w_stack).reshape(h, 1, 1)
 
         # 获取时间嵌入
+        # print('Stamp size: ', stamp.shape)
         period_emb = self.reduce_stamp(stamp.permute(0, 2, 1)).squeeze(2)
         temp_1 = self.temp_1(period_emb)
 
@@ -65,13 +69,14 @@ class TPGNN(nn.Module):
         # 计算图拉普拉斯
         adj_1 = torch.softmax(torch.relu(laplacian(adj)) / self.temperature, dim=0)
         adj_2 = torch.softmax(torch.relu(self.r1 @ self.r1.T) / self.temperature, dim=0)
-        adj_1 = F.dropout(adj_1, p=self.droprate)
-        adj_2 = F.dropout(adj_2, p=self.droprate)
+        adj_1 = F.dropout(adj_1, p=self.droprate).to(device)
+        adj_2 = F.dropout(adj_2, p=self.droprate).to(device)
 
         # 计算 z 和 z_fix
         z = (x @ w_stack[0]) * (temp_1[:, 0].reshape(b, 1, 1, 1))
         z = z.permute(0, 2, 1, 3).reshape(b * t, n, -1)
         for i in range(1, self.kt):
+            
             z = adj_1 @ z + (x @ w_stack[i] * (temp_1[:, i].reshape(b, 1, 1, 1))).permute(0, 2, 1, 3).reshape(b * t, n, -1)
 
         z_fix = (x @ w_stack[0]) * (temp_1[:, 0].reshape(b, 1, 1, 1))

@@ -1,5 +1,57 @@
 import numpy as np
 
+def RSE(pred, true):
+    """Relative Squared Error"""
+    return np.sqrt(np.sum((true - pred) ** 2)) / np.sqrt(np.sum((true - true.mean()) ** 2))
+
+def CORR(pred, true):
+    """Correlation Coefficient"""
+    u = ((true - true.mean(0)) * (pred - pred.mean(0))).sum(0)
+    d = np.sqrt(((true - true.mean(0)) ** 2 * (pred - pred.mean(0)) ** 2).sum(0))
+    return (u / d).mean(-1)
+
+def MAE(pred, true):
+    """Mean Absolute Error"""
+    return np.mean(np.abs(pred - true))
+
+def MSE(pred, true):
+    """Mean Squared Error"""
+    return np.mean((pred - true) ** 2)
+
+def RMSE(pred, true):
+    """Root Mean Squared Error"""
+    return np.sqrt(MSE(pred, true))
+
+def MAPE(pred, true):
+    """Mean Absolute Percentage Error"""
+    return np.mean(np.abs((pred - true) / true))
+
+def MSPE(pred, true):
+    """Mean Squared Percentage Error"""
+    return np.mean(np.square((pred - true) / true))
+
+def calculate_metrics(pred, true):
+    """
+    Calculate all metrics and return them as a tuple.
+    """
+    mae = MAE(pred, true)
+    mse = MSE(pred, true)
+    rmse = RMSE(pred, true)
+    mape = MAPE(pred, true)
+    mspe = MSPE(pred, true)
+    return mae, mse, rmse, mape, mspe
+
+def metric(pred, true):
+    """Alias for calculate_metrics"""
+    return calculate_metrics(pred, true)
+
+
+
+
+
+'''
+import numpy as np
+
 
 def RSE(pred, true):
     return np.sqrt(np.sum((true - pred) ** 2)) / np.sqrt(np.sum((true - true.mean()) ** 2))
@@ -12,11 +64,11 @@ def CORR(pred, true):
 
 
 def MAE(pred, true):
-    return np.mean(np.abs(true - pred))
+    return np.mean(np.abs(pred - true))
 
 
 def MSE(pred, true):
-    return np.mean((true - pred) ** 2)
+    return np.mean((pred - true) ** 2)
 
 
 def RMSE(pred, true):
@@ -24,11 +76,11 @@ def RMSE(pred, true):
 
 
 def MAPE(pred, true):
-    return np.mean(np.abs((true - pred) / true))
+    return np.mean(np.abs((pred - true) / true))
 
 
 def MSPE(pred, true):
-    return np.mean(np.square((true - pred) / true))
+    return np.mean(np.square((pred - true) / true))
 
 
 def metric(pred, true):
@@ -39,3 +91,4 @@ def metric(pred, true):
     mspe = MSPE(pred, true)
 
     return mae, mse, rmse, mape, mspe
+'''

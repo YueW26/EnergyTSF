@@ -8,7 +8,7 @@ import sys
 import os
 import os.path
 import time
-from models.TPGNN import predict, predict_stamp
+from models.TPGNN.predict import predict, predict_stamp
 import models.TPGNN as models
 from data_provider.dataset import STAGNN_Dataset, STAGNN_stamp_Dataset
 from torch.utils.tensorboard import SummaryWriter
@@ -145,6 +145,7 @@ def train(**kwargs):
             model.train()
             loss_sum, n = 0.0, 0
             for x, stamp, y in train_iter:
+                print(f"Before x shape: {x.shape}, stamp shape: {stamp.shape}, y shape: {y.shape}")
                 x, stamp, y = x.cuda(), stamp.cuda(), y.cuda()
                 x = x.type(torch.cuda.FloatTensor)
                 stamp = stamp.type(torch.cuda.LongTensor)
@@ -153,6 +154,7 @@ def train(**kwargs):
                 x = x.repeat(2, 1, 1, 1)
                 stamp = stamp.repeat(2, 1)
                 y = y.repeat(2, 1, 1, 1)
+                print(f"After x shape: {x.shape}, stamp shape: {stamp.shape}, y shape: {y.shape}")
                 y_pred, loss = model(x, stamp, y, epoch)
                 bs = y.shape[0]
                 y_pred1 = y_pred[:bs//2, :, :, :]
