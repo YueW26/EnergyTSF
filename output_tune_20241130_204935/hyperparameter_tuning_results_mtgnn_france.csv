@@ -1,0 +1,5 @@
+embed_size,hidden_size,learning_rate,batch_size,epochs,val_loss,val_rae,val_corr,test_acc,test_rae,test_corr
+32,64,0.001,128,3,tensor(0.0470),tensor(0.0397),0.92997456,tensor(0.0578),tensor(0.0453),0.9283102
+32,128,0.001,128,3,tensor(0.0470),tensor(0.0397),0.9299558,tensor(0.0581),tensor(0.0457),0.92731726
+128,64,0.001,128,3,tensor(0.0453),tensor(0.0379),0.9313264,tensor(0.0565),tensor(0.0442),0.9284402
+128,128,0.001,128,3,tensor(0.0459),tensor(0.0385),0.93226564,tensor(0.0564),tensor(0.0439),0.92911005

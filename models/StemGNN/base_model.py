@@ -97,7 +97,7 @@ class StockBlockLayer(nn.Module):
             backcast_source = None
         return forecast, backcast_source
 
-
+# class StemGNN
 class Model(nn.Module):
     def __init__(self, units, stack_cnt, time_step, multi_layer, horizon=1, dropout_rate=0.5, leaky_rate=0.2,
                  device='cpu'):

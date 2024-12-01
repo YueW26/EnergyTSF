@@ -1,0 +1,2 @@
+正在运行第 1 个组合：
+python Stemgnn/stem_gnn.py --train True --evaluate True --dataset France_processed_0 --window_size 24 --horizon 3 --norm_method z_score --train_length 7 --valid_length 2 --test_length 1 --root_path /mnt/webscistorage/cc7738/ws_joella/EnergyTSF/datasets/ --device cuda:0 --data Opennem --task_name forecasting --data_path France_processed_0.csv --target 'Fossil Gas  - Actual Aggregated [MW]'

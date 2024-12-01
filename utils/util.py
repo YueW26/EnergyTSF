@@ -291,9 +291,9 @@ def load_node_feature(path):
 
 def normal_std(x):
     return x.std() * np.sqrt((len(x) - 1.) / (len(x)))
-
-
 '''
+
+
 
 
 
@@ -509,9 +509,14 @@ def load_pickle(pickle_file):
         raise
     return pickle_data
 
+# def load_adj(pkl_filename):
+#     sensor_ids, sensor_id_to_ind, adj = load_pickle(pkl_filename)
+#     return adj
+
 def load_adj(pkl_filename):
-    sensor_ids, sensor_id_to_ind, adj = load_pickle(pkl_filename)
-    return adj
+    with open(pkl_filename, 'rb') as f:
+        adj_data = pickle.load(f)  # 确保返回解码后的字典
+    return adj_data
 
 
 def load_dataset(dataset_dir, batch_size, valid_batch_size= None, test_batch_size=None):
@@ -601,4 +606,6 @@ def load_node_feature(path):
 
 def normal_std(x):
     return x.std() * np.sqrt((len(x) - 1.) / (len(x)))
-            
+   
+   
+       

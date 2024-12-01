@@ -13,6 +13,28 @@ from data_provider.data_factory import data_provider
 from utils.math_utils import evaluate
 
 
+import sys
+import logging
+
+
+# def setup_logging(log_file_path):
+#     """
+#     设置日志系统，输出日志到文件和终端
+#     """
+#     os.makedirs(os.path.dirname(log_file_path), exist_ok=True)  # 确保日志目录存在
+#     logging.basicConfig(
+#         level=logging.INFO,
+#         format="%(asctime)s - %(levelname)s - %(message)s",
+#         handlers=[
+#             logging.FileHandler(log_file_path, mode='a'),  # 追加模式保存日志到文件
+#             logging.StreamHandler(sys.stdout)  # 同时输出到终端
+#         ]
+#     )
+#     sys.stdout = open(log_file_path, 'a')  # 重定向标准输出到日志文件
+#     sys.stderr = sys.stdout  # 捕获错误输出
+
+
+
 def save_model(model, model_dir, epoch=None):
     if model_dir is None:
         return
@@ -47,7 +69,7 @@ def inference(model, dataloader, device, node_cnt, window_size, horizon):
             inputs = inputs.to(device)
             target = target.to(device)
             step = 0
-            forecast_steps = np.zeros([inputs.size()[0], horizon, node_cnt], dtype=np.float)
+            forecast_steps = np.zeros([inputs.size()[0], horizon, node_cnt], dtype=float) ###################### np.float - float
             while step < horizon:
                 forecast_result, a = model(inputs)
                 len_model_output = forecast_result.size()[1]
@@ -68,7 +90,7 @@ def validate(model, dataloader, device, normalize_method, statistic,
              node_cnt, window_size, horizon,
              result_file=None):
     start = datetime.now()
-    forecast_norm, target_norm = inference(model, dataloader, device,
+    forecast_norm, target_norm = inference(model, dataloader, device,   
                                            node_cnt, window_size, horizon)
     if normalize_method and statistic:
         forecast = de_normalized(forecast_norm, normalize_method, statistic)
@@ -179,7 +201,7 @@ def train(train_data, valid_data, args, result_file):
             is_best_for_now = False
             print('------ validate on data: VALIDATE ------')
             performance_metrics = \
-                validate(model, valid_loader, args.device, args.norm_method, normalize_statistic,
+                validate(model, valid_loader, args.device, args.norm_method, normalize_statistic, 
                          node_cnt, args.window_size, args.horizon,
                          result_file=result_file)
             if best_validate_mae > performance_metrics['mae']:
@@ -210,7 +232,16 @@ def test(test_data, args, result_train_file, result_test_file):
     mae, mape, rmse = performance_metrics['mae'], performance_metrics['mape'], performance_metrics['rmse']
     print('Performance on test set: MAPE: {:5.2f} | MAE: {:5.2f} | RMSE: {:5.4f}'.format(mape, mae, rmse))
 
+# if __name__ == "__main__":
+#     log_dir = "/mnt/webscistorage/cc7738/ws_joella/EnergyTSF/Stemgnn"
+#     log_file = os.path.join(log_dir, f"run_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
+#     setup_logging(log_file)  # 初始化日志
 
+#     logging.info("StemGNN Model Script Started")
+#     # 示例调用
+#     # train(data_train, data_valid, args, result_file_train)
+#     # test(data_test, args, result_file_train, result_file_test)
+#     logging.info("StemGNN Model Script Finished")
 
 '''
 

@@ -1,0 +1,1 @@
+train_time,test_time,window_size,horizon,train_length,valid_length,test_length,epoch,lr,multi_layer,batch_size,optimizer,dropout_rate,metric_name,metric_value
