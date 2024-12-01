@@ -21,12 +21,8 @@ class Trainer():
         self.model.train()
         self.optimizer.zero_grad()
         output = self.model(input, idx=idx)
-        print('Before')
-        print(input.shape)
-        print(output.shape)
-        print(real_val.shape)
         output = output.transpose(1,3)
-        real = torch.unsqueeze(real_val,dim=1)
+        real = torch.unsqueeze(real_val, dim=1)[..., :output.size(3)]
         
         dim1, dim2, dim3, dim4 = output.shape
         predict = self.scaler.inverse_transform(output.reshape(-1, output.size(2)).cpu().detach().numpy())
@@ -47,8 +43,6 @@ class Trainer():
 
         self.optimizer.step()
         # mae = util.masked_mae(predict,real,0.0).item()
-        print(predict.shape)
-        print(real.shape)
         mape = util.masked_mape(predict,real,0.0).item()
         rmse = util.masked_rmse(predict,real,0.0).item()
         self.iter += 1
@@ -58,11 +52,16 @@ class Trainer():
         self.model.eval()
         output = self.model(input)
         output = output.transpose(1,3)
-        real = torch.unsqueeze(real_val,dim=1)
-        predict = self.scaler.inverse_transform(output)
+        real = torch.unsqueeze(real_val,dim=1)[..., :output.size(3)]
+        
+        dim1, dim2, dim3, dim4 = output.shape
+        predict = self.scaler.inverse_transform(output.reshape(-1, output.size(2)).cpu().detach().numpy())
+        predict = torch.from_numpy(predict.reshape(dim1, dim2, dim3, dim4)).to(self.device)
+        predict.requires_grad_()
+
         loss = self.loss(predict, real, 0.0)
-        mape = util.masked_mape(predict,real,0.0).item()
-        rmse = util.masked_rmse(predict,real,0.0).item()
+        mape = util.masked_mape(predict, real,0.0).item()
+        rmse = util.masked_rmse(predict, real,0.0).item()
         return loss.item(),mape,rmse
 
 
