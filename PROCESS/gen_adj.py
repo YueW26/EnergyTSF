@@ -83,3 +83,16 @@ with open('/mnt/webscistorage/cc7738/ws_joella/EnergyTSF/datasets/France_process
 
 print("Content of .pkl file:", data)
 
+
+
+
+        # renamed:    experiment_log.txt -> LOG_DOKU/experiment_log.txt
+        # renamed:    log.txt -> LOG_DOKU/log.txt
+        # renamed:    metrics_log.txt -> LOG_DOKU/metrics_log.txt
+        # renamed:    output_log.txt -> LOG_DOKU/output_log.txt
+        # renamed:    train_log.txt -> LOG_DOKU/train_log.txt
+        # renamed:    generate_training_data_MTGNN.py -> MTGNN/generate_training_data_MTGNN.py
+        # renamed:    gen_adj.py -> PROCESS/gen_adj.py
+        # renamed:    list_classes.py -> PROCESS/list_classes.py
+        # renamed:    parameter.py -> PROCESS/parameter.py
+        # renamed:    main_tpgnn.py -> TPGNN/main_tpgnn.py
