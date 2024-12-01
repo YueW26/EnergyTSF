@@ -5,6 +5,7 @@ import utils.util as util
 class Trainer():
     def __init__(self, model, lrate, wdecay, clip, step_size, seq_out_len, scaler, device, cl=True):
         self.scaler = scaler
+        self.device = device
         self.model = model
         self.model.to(device)
         self.optimizer = optim.Adam(self.model.parameters(), lr=lrate, weight_decay=wdecay)
@@ -20,9 +21,18 @@ class Trainer():
         self.model.train()
         self.optimizer.zero_grad()
         output = self.model(input, idx=idx)
+        print('Before')
+        print(input.shape)
+        print(output.shape)
+        print(real_val.shape)
         output = output.transpose(1,3)
         real = torch.unsqueeze(real_val,dim=1)
-        predict = self.scaler.inverse_transform(output)
+        
+        dim1, dim2, dim3, dim4 = output.shape
+        predict = self.scaler.inverse_transform(output.reshape(-1, output.size(2)).cpu().detach().numpy())
+        predict = torch.from_numpy(predict.reshape(dim1, dim2, dim3, dim4)).to(self.device)
+        predict.requires_grad_()
+
         if self.iter%self.step==0 and self.task_level<=self.seq_out_len:
             self.task_level +=1
         if self.cl:
@@ -37,6 +47,8 @@ class Trainer():
 
         self.optimizer.step()
         # mae = util.masked_mae(predict,real,0.0).item()
+        print(predict.shape)
+        print(real.shape)
         mape = util.masked_mape(predict,real,0.0).item()
         rmse = util.masked_rmse(predict,real,0.0).item()
         self.iter += 1
