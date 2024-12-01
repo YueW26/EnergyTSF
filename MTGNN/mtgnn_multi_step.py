@@ -143,7 +143,6 @@ def main(runid):
         for iter, (x, y, x_mark, y_mark) in enumerate(dataloader['train_loader']):
             trainx = torch.tensor(x, dtype=torch.float32).to(device).unsqueeze(1).transpose(2, 3)
             trainy = torch.tensor(y, dtype=torch.float32).to(device).unsqueeze(1).transpose(2, 3)
-
             trainx = trainx.expand(-1, args.in_dim, -1, -1)
 
             if iter % args.step_size2 == 0:
@@ -178,8 +177,9 @@ def main(runid):
         for iter, (x, y, x_mark, y_mark) in enumerate(dataloader['val_loader']): #####################
             testx = torch.tensor(x, dtype=torch.float32).to(device).unsqueeze(1).transpose(2, 3)
             testy = torch.tensor(y, dtype=torch.float32).to(device).unsqueeze(1).transpose(2, 3)
+            testx = testx.expand(-1, args.in_dim, -1, -1)
 
-            metrics = engine.eval(testx, testy[:, 0, :, :].cpu().numpy())
+            metrics = engine.eval(testx, testy[:, 0, :, :])
             valid_loss.append(metrics[0])
             valid_mape.append(metrics[1])
             valid_rmse.append(metrics[2])
@@ -198,6 +198,7 @@ def main(runid):
         print(log.format(i, mtrain_loss, mtrain_mape, mtrain_rmse, mvalid_loss, mvalid_mape, mvalid_rmse, (t2 - t1)), flush=True)
 
         if mvalid_loss < minl:
+            print(args.save + "exp" + str(args.expid) + "_" + str(runid) + ".pth")
             torch.save(engine.model.state_dict(), args.save + "exp" + str(args.expid) + "_" + str(runid) + ".pth")
             minl = mvalid_loss
 
