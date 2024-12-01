@@ -1,0 +1,23 @@
+Training configs: Namespace(batch_size=32, data='Opennem', data_path='France_processed_0.csv', dataset='France_processed_0', decay_rate=0.5, des='test', device='cpu', dropout_rate=0.5, early_stop=False, embed='timeF', epoch=2, evaluate=True, exponential_decay_step=5, features='MS', freq='h', horizon=3, itr=2, label_len=12, leakyrelu_rate=0.2, learning_rate=0.0001, loss='MSE', lr=0.0001, lradj='type1', multi_layer=5, norm_method='z_score', num_workers=10, optimizer='RMSProp', patience=5, pred_len=24, root_path='/mnt/webscistorage/cc7738/ws_joella/EnergyTSF/datasets/', seasonal_patterns='Monthly', seq_len=24, target='Fossil Gas  - Actual Aggregated [MW]', task_name='forecasting', test_length=1.0, train=True, train_epochs=2, train_length=7.0, use_amp=False, valid_length=2.0, validate_freq=1, window_size=12)
+[[ 193. 2823. 2025. ...    0.  284. 1314.]
+ [ 193. 2515. 1577. ...    0.  281. 1383.]
+ [ 193. 2452. 1416. ...    0.  281. 1464.]
+ ...
+ [ 330. 1143.   27. ...    0.  169. 4757.]
+ [ 333. 1239.   27. ...    0.  170. 4485.]
+ [ 335. 1349.   27. ...  163.  169. 4355.]]
+[  325.8118237   3801.63140317   653.59570366   226.69333266
+  4651.13852199  1783.54307651 43101.86928098  1154.00841999
+   208.35230565  3141.18789325]
+Data provider called with flag=train, data=Opennem
+train 58271
+DataLoader created: batch_size=32, shuffle_flag=True, drop_last=True
+Data provider called with flag=val, data=Opennem
+val 16639
+DataLoader created: batch_size=32, shuffle_flag=True, drop_last=True
+Total Trainable Params: 1059083
+---------------------------------------------------------------------------------------------------
+Exiting from training early
+Data provider called with flag=test, data=Opennem
+test 8313
+DataLoader created: batch_size=1, shuffle_flag=False, drop_last=True

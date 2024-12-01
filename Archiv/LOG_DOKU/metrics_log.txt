@@ -1,0 +1,30 @@
+Batch Size: 8
+Total Training Time: 0.16 hours
+Test Results for long_term_forecast_test_DLinear_0:
+MSE: 0.427635, MAE: 0.355568, RMSE: 0.653938, MAPE: 2.043779
+Inference Time: 121.17 seconds
+
+Batch Size: 8
+Total Training Time: 0.06 hours
+Test Results for long_term_forecast_test_DLinear_0:
+MSE: 0.427635, MAE: 0.355568, RMSE: 0.653938, MAPE: 2.043779
+Inference Time: 83.25 seconds
+
+Batch Size: 8
+Total Training Time: 0.07 hours
+Test Results for long_term_forecast_test_DLinear_0:
+MSE: 0.427635, MAE: 0.355568, RMSE: 0.653938, MAPE: 2.043779
+Inference Time: 82.05 seconds
+
+Batch Size: 8
+Total Training Time: 0.02 hours
+Test Results for long_term_forecast_test_DLinear_0:
+MSE: 0.434818, MAE: 0.361253, RMSE: 0.659408, MAPE: 2.060666
+Inference Time: 83.70 seconds
+
+Batch Size: 8
+Total Training Time: 0.22 hours
+Test Results for long_term_forecast_test_DLinear_0:
+MSE: 0.427219, MAE: 0.355406, RMSE: 0.653620, MAPE: 2.042780
+Inference Time: 97.73 seconds
+
