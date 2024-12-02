@@ -24,17 +24,17 @@ class Trainer():
         output = output.transpose(1,3)
         real = torch.unsqueeze(real_val, dim=1)[..., :output.size(3)]
         
-        dim1, dim2, dim3, dim4 = output.shape
-        predict = self.scaler.inverse_transform(output.reshape(-1, output.size(2)).cpu().detach().numpy())
-        predict = torch.from_numpy(predict.reshape(dim1, dim2, dim3, dim4)).to(self.device)
-        predict.requires_grad_()
+        # dim1, dim2, dim3, dim4 = output.shape
+        # predict = self.scaler.inverse_transform(output.reshape(-1, output.size(2)).cpu().detach().numpy())
+        # predict = torch.from_numpy(predict.reshape(dim1, dim2, dim3, dim4)).to(self.device)
+        # predict.requires_grad_()
 
         if self.iter%self.step==0 and self.task_level<=self.seq_out_len:
             self.task_level +=1
         if self.cl:
-            loss = self.loss(predict[:, :, :, :self.task_level], real[:, :, :, :self.task_level], 0.0)
+            loss = self.loss(output[:, :, :, :self.task_level], real[:, :, :, :self.task_level], 0.0)
         else:
-            loss = self.loss(predict, real, 0.0)
+            loss = self.loss(output, real, 0.0)
 
         loss.backward()
 
@@ -43,8 +43,8 @@ class Trainer():
 
         self.optimizer.step()
         # mae = util.masked_mae(predict,real,0.0).item()
-        mape = util.masked_mape(predict,real,0.0).item()
-        rmse = util.masked_rmse(predict,real,0.0).item()
+        mape = util.masked_mape(output,real,0.0).item()
+        rmse = util.masked_rmse(output,real,0.0).item()
         self.iter += 1
         return loss.item(),mape,rmse
 
@@ -54,14 +54,14 @@ class Trainer():
         output = output.transpose(1,3)
         real = torch.unsqueeze(real_val,dim=1)[..., :output.size(3)]
         
-        dim1, dim2, dim3, dim4 = output.shape
-        predict = self.scaler.inverse_transform(output.reshape(-1, output.size(2)).cpu().detach().numpy())
-        predict = torch.from_numpy(predict.reshape(dim1, dim2, dim3, dim4)).to(self.device)
-        predict.requires_grad_()
+        # dim1, dim2, dim3, dim4 = output.shape
+        # predict = self.scaler.inverse_transform(output.reshape(-1, output.size(2)).cpu().detach().numpy())
+        # predict = torch.from_numpy(predict.reshape(dim1, dim2, dim3, dim4)).to(self.device)
+        # predict.requires_grad_()
 
-        loss = self.loss(predict, real, 0.0)
-        mape = util.masked_mape(predict, real,0.0).item()
-        rmse = util.masked_rmse(predict, real,0.0).item()
+        loss = self.loss(output, real, 0.0)
+        mape = util.masked_mape(output, real,0.0).item()
+        rmse = util.masked_rmse(output, real,0.0).item()
         return loss.item(),mape,rmse
 
 
