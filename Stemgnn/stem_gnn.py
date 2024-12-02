@@ -108,13 +108,13 @@ if not os.path.exists(result_test_file):
     os.makedirs(result_test_file)
     
 df = pd.read_csv(data_file)
-# Преобразуем все колонки к числовому типу, заменяя нечисловые значения на NaN
+# Convert all columns to numeric type, replacing non-numeric values with NaN
 df_numeric = df.apply(pd.to_numeric, errors='coerce')
 
-# Удаляем столбцы, которые содержат NaN (то есть нечисловые значения)
+# Deleting columns that contain NaN (i.e. non-numeric values)
 df_numeric = df_numeric.dropna(axis=1)
 
-# Преобразуем DataFrame в numpy массив
+# Converting the DataFrame to a numpy array
 data = df_numeric.values
 args.data_update = data
 
