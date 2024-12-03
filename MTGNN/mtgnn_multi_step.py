@@ -214,13 +214,16 @@ def main(runid):
     # Test data
     outputs = []
     realy = torch.tensor(dataloader['test_loader'].dataset.data_y, dtype=torch.float32).to(device)
-    realy = realy.transpose(1, 3)[:, 0, :, :]
+    
+    realy = realy.unsqueeze(1)  #.transpose(2, 3)[:, 0, :, :]
 
     for iter, (x, y, x_mark, y_mark) in enumerate(dataloader['test_loader']):
         testx = torch.tensor(x, dtype=torch.float32).to(device).unsqueeze(1).transpose(2, 3)
+        testx = testx.expand(-1, args.in_dim, -1, -1)
         with torch.no_grad():
             preds = engine.model(testx)
-            preds = preds.transpose(1, 3)
+            preds = preds.transpose(2, 3)
+        
         outputs.append(preds.squeeze())
 
     yhat = torch.cat(outputs, dim=0)
@@ -229,17 +232,22 @@ def main(runid):
     mae = []
     mape = []
     rmse = []
+
+    # TODO: FIX IT
+    args.seq_out_len = realy.shape[2]
+    #######################################
     for i in range(args.seq_out_len):
-        pred = dataloader['scaler'].inverse_transform(yhat[:, :, i].cpu().numpy())
-        real = dataloader['scaler'].inverse_transform(realy[:, :, i].cpu().numpy())
+        pred = yhat[:, :, i] #dataloader['scaler'].inverse_transform(yhat[:, :, i].cpu().numpy())
+        # Decrease to the same size as pred
+        real = realy[:yhat.shape[0], :, i] #dataloader['scaler'].inverse_transform(realy[:yhat.shape[0], :, i].cpu().numpy())
         metrics = metric(pred, real)
+        
         log = 'Evaluate best model on test data for horizon {:d}, Test MAE: {:.4f}, Test MAPE: {:.4f}, Test RMSE: {:.4f}'
         print(log.format(i + 1, metrics[0], metrics[1], metrics[2]))
         mae.append(metrics[0])
         mape.append(metrics[1])
         rmse.append(metrics[2])
     return mae, mape, rmse
-
 
 if __name__ == "__main__":
 
