@@ -1,4 +1,8 @@
 
+import os, sys
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -13,8 +17,9 @@ import models.TPGNN as models
 from data_provider.dataset import STAGNN_Dataset, STAGNN_stamp_Dataset
 from torch.utils.tensorboard import SummaryWriter
 from utils.utils import evaluate_metric, weight_matrix, weight_matrix_nl, laplacian, vendermonde
+from utils.util import load_adj
 from config import DefaultConfig, Logger
-
+from data_provider.dataset import *
 
 opt = DefaultConfig()
 
@@ -27,7 +32,25 @@ torch.cuda.manual_seed(seed)
 np.random.seed(seed)
 random.seed(seed)
 torch.backends.cudnn.deterministic = True
+from data_provider.data_Opennem import Dataset_Opennem
+from torch.utils.data import DataLoader
 
+def create_dataloader(args, flag):
+    dataset = Dataset_Opennem(
+        root_path=os.path.dirname(args.data_path),
+        data_path=os.path.basename(args.data_path),
+        size=[args.seq_in_len, args.seq_in_len - 2, args.seq_out_len],
+        features='M',
+        target='Fossil Gas  - Actual Aggregated [MW]',
+        scale=True,
+        timeenc=0,
+        flag=flag,
+        args=args
+    )
+    dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=(flag == 'train'), drop_last=True)
+    
+    
+    return dataloader
 
 def test(model, loss_fn, test_iter, opt):
     model.eval()
@@ -51,7 +74,7 @@ def train(**kwargs):
     os.environ['CUDA_VISIBLE_DEVICES'] = str(opt.device)
     # adj matrix
     if opt.adj_matrix_path != None:
-        opt.dis_mat = weight_matrix_nl(opt.adj_matrix_path, epsilon=opt.eps)
+        opt.dis_mat = weight_matrix_nl(opt.adj_matrix_path, epsilon=opt.eps) #load_adj(opt.adj_matrix_path)
         opt.dis_mat = torch.from_numpy(opt.dis_mat).float().cuda()
     else:
         opt.dis_mat = 0.0
@@ -69,6 +92,10 @@ def train(**kwargs):
 
     # load data
     batch_size = opt.batch_size
+    # train_iter = create_dataloader(opt, flag='train')
+    # val_iter = create_dataloader(opt, flag='val')
+    # test_iter = create_dataloader(opt, flag='test')
+
     train_dataset = STAGNN_stamp_Dataset(opt, train=True, val=False)
     val_dataset = STAGNN_stamp_Dataset(opt, train=False, val=True)
     test_dataset = STAGNN_stamp_Dataset(opt, train=False, val=False)
@@ -144,8 +171,8 @@ def train(**kwargs):
         for epoch in range(start_epoch, start_epoch + epochs):
             model.train()
             loss_sum, n = 0.0, 0
-            for x, stamp, y in train_iter:
-                print(f"Before x shape: {x.shape}, stamp shape: {stamp.shape}, y shape: {y.shape}")
+            for x, stamp, y, in train_iter:
+                # print(f"Before x shape: {x.shape}, stamp shape: {stamp.shape}, y shape: {y.shape}")
                 x, stamp, y = x.cuda(), stamp.cuda(), y.cuda()
                 x = x.type(torch.cuda.FloatTensor)
                 stamp = stamp.type(torch.cuda.LongTensor)
@@ -154,7 +181,7 @@ def train(**kwargs):
                 x = x.repeat(2, 1, 1, 1)
                 stamp = stamp.repeat(2, 1)
                 y = y.repeat(2, 1, 1, 1)
-                print(f"After x shape: {x.shape}, stamp shape: {stamp.shape}, y shape: {y.shape}")
+                # print(f"After x shape: {x.shape}, stamp shape: {stamp.shape}, y shape: {y.shape}")
                 y_pred, loss = model(x, stamp, y, epoch)
                 bs = y.shape[0]
                 y_pred1 = y_pred[:bs//2, :, :, :]
@@ -175,6 +202,7 @@ def train(**kwargs):
             val_loss = test(model, loss_fn, val_iter, opt)
             print('epoch', epoch, ' ', name, ', train loss:',
                   loss_sum / n, ', validation loss:', val_loss)
+            
             if epoch>200 and val_loss < min_val_loss**0.999:
                 if val_loss<min_val_loss:
                     min_val_loss = val_loss

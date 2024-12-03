@@ -49,6 +49,7 @@ class SpatioEnc(nn.Module):
 
     def forward(self, x):
         enc = self.enc
+
         x = x.permute(0, 2, 1, 3) + enc
         if self.no:
             x = self.norm(x)

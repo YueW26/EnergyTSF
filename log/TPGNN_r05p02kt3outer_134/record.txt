@@ -1,0 +1,11 @@
+{'sensor_ids': ['Biomass  - Actual Aggregated [MW]', 'Fossil Gas  - Actual Aggregated [MW]', 'Fossil Hard coal  - Actual Aggregated [MW]', 'Fossil Oil  - Actual Aggregated [MW]', 'Hydro Run-of-river and poundage  - Actual Aggregated [MW]', 'Hydro Water Reservoir  - Actual Aggregated [MW]', 'Nuclear  - Actual Aggregated [MW]', 'Solar  - Actual Aggregated [MW]', 'Waste  - Actual Aggregated [MW]', 'Wind Onshore  - Actual Aggregated [MW]'], 'sensor_id_to_ind': {'Biomass  - Actual Aggregated [MW]': 0, 'Fossil Gas  - Actual Aggregated [MW]': 1, 'Fossil Hard coal  - Actual Aggregated [MW]': 2, 'Fossil Oil  - Actual Aggregated [MW]': 3, 'Hydro Run-of-river and poundage  - Actual Aggregated [MW]': 4, 'Hydro Water Reservoir  - Actual Aggregated [MW]': 5, 'Nuclear  - Actual Aggregated [MW]': 6, 'Solar  - Actual Aggregated [MW]': 7, 'Waste  - Actual Aggregated [MW]': 8, 'Wind Onshore  - Actual Aggregated [MW]': 9}, 'adj': array([[0., 0., 1., 0., 0., 0., 1., 0., 0., 0.],
+       [0., 0., 1., 1., 0., 1., 1., 1., 1., 0.],
+       [1., 1., 0., 1., 0., 1., 1., 1., 1., 1.],
+       [0., 1., 1., 0., 0., 1., 1., 0., 0., 0.],
+       [0., 0., 0., 0., 0., 1., 1., 0., 0., 0.],
+       [0., 1., 1., 1., 1., 0., 1., 1., 0., 0.],
+       [1., 1., 1., 1., 1., 1., 0., 1., 1., 0.],
+       [0., 1., 1., 0., 0., 1., 1., 0., 1., 0.],
+       [0., 1., 1., 0., 0., 0., 1., 1., 0., 1.],
+       [0., 0., 1., 0., 0., 0., 0., 0., 1., 0.]])}
+ERROR: Weight matrix W has incorrect shape or type: <class 'dict'>, N/A

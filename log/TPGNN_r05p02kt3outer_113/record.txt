@@ -1,0 +1,232 @@
+user config:
+seed 666
+device 0
+scaler StandardScaler()
+day_slot 288
+n_route 228
+n_his 12
+n_pred 12
+n_train 34
+n_val 5
+n_test 5
+mode 1
+n_c 10
+model STAGNN_stamp
+TPG TPGNN
+name PeMS
+log_path log/TPGNN_r05p02kt3outer_113
+crash 113
+new_name TPGNN_r05p02kt3outer_113
+batch_size 50
+lr 0.001
+a 0.1
+r 0.5
+n_mask 1
+adam {'use': True, 'weight_decay': 0.0001}
+slr {'use': True, 'step_size': 400, 'gamma': 0.3}
+resume False
+start_epoch 0
+epochs 1500
+n_layer 1
+n_attr 64
+n_hid 512
+reg_A 0.0001
+circle 288
+drop_prob 0.2
+CE {'use': True, 'kernel_size': 1, 'bias': False}
+LE {'use': False, 'bias': False}
+SE {'use': True, 'separate': True, 'no': False}
+TE {'use': True, 'no': True}
+attn {'head': 1, 'd_k': 32, 'd_v': 32, 'drop_prob': 0.2}
+STstamp {'use': True, 'kt': 3, 'temperature': 1.0}
+T4N {'use': True, 'step': 2, 'end_epoch': 10000, 'change_head': True, 'change_enc': True}
+stamp_path data/PeMS/time_stamp.npy
+data_path /home/kit/aifb/cc7738/scratch/EnergyTSF/datasets/France_processed_0.csv
+adj_matrix_path /home/kit/aifb/cc7738/scratch/EnergyTSF/datasets/France_processed_0_adj_mx.pkl
+dis_mat tensor([[0., 0., 1., 0., 0., 0., 1., 0., 0., 0.],
+        [0., 0., 1., 1., 0., 1., 1., 1., 1., 0.],
+        [1., 1., 0., 1., 0., 1., 1., 1., 1., 1.],
+        [0., 1., 1., 0., 0., 1., 1., 0., 0., 0.],
+        [0., 0., 0., 0., 0., 1., 1., 0., 0., 0.],
+        [0., 1., 1., 1., 1., 0., 1., 1., 0., 0.],
+        [1., 1., 1., 1., 1., 1., 0., 1., 1., 0.],
+        [0., 1., 1., 0., 0., 1., 1., 0., 1., 0.],
+        [0., 1., 1., 0., 0., 0., 1., 1., 0., 1.],
+        [0., 0., 1., 0., 0., 0., 0., 0., 1., 0.]], device='cuda:0')
+prefix log/PeMS/
+checkpoint_temp_path log/PeMS//temp.pth
+checkpoint_best_path log/PeMS//best.pth
+tensorboard_path log/PeMS/
+record_path log/PeMS/record.txt
+eps 0.1
+parse <bound method DefaultConfig.parse of <config.DefaultConfig object at 0x150e43f60ee0>>
+output <bound method DefaultConfig.output of <config.DefaultConfig object at 0x150e43f60ee0>>
+Original hour values:
+0      0
+1      1
+2      2
+3      3
+4      4
+5      5
+6      6
+7      7
+8      8
+9      9
+10    10
+11    11
+12    12
+13    13
+14    14
+15    15
+16    16
+17    17
+18    18
+19    19
+Name: hour, dtype: int64
+df_stamp columns after adding minute: Index(['date', 'month', 'day', 'weekday', 'hour', 'minute'], dtype='object')
+df_stamp columns before drop: Index(['date', 'month', 'day', 'weekday', 'hour', 'minute'], dtype='object')
+Before normalization:
+   month  day  weekday  hour  minute
+0      1    1        3     0       0
+1      1    1        3     1       0
+2      1    1        3     2       0
+3      1    1        3     3       0
+4      1    1        3     4       0
+After normalization:
+data_stamp shape: (58285, 5)
+data_stamp example:
+ [[1 1 3 0 0]
+ [1 1 3 1 0]
+ [1 1 3 2 0]
+ [1 1 3 3 0]
+ [1 1 3 4 0]]
+Dataset split: 0, border1: 0, border2: 58285
+data_x shape: (58285, 10), data_y shape: (58285, 10), data_stamp shape: (58285, 5)
+data_stamp shape: (58285, 5)
+data_stamp example:
+ [[1 1 3 0 0]
+ [1 1 3 1 0]
+ [1 1 3 2 0]
+ [1 1 3 3 0]
+ [1 1 3 4 0]]
+df_stamp columns: Index(['date', 'month', 'day', 'weekday', 'hour', 'minute'], dtype='object')
+df_stamp head:
+                  date  month  day  weekday  hour  minute
+0 2015-01-01 00:00:00      1    1        3     0       0
+1 2015-01-01 01:00:00      1    1        3     1       0
+2 2015-01-01 02:00:00      1    1        3     2       0
+3 2015-01-01 03:00:00      1    1        3     3       0
+4 2015-01-01 04:00:00      1    1        3     4       0
+Original hour values:
+58285     7
+58286     8
+58287     9
+58288    10
+58289    11
+58290    12
+58291    13
+58292    14
+58293    15
+58294    16
+58295    17
+58296    18
+58297    19
+58298    20
+58299    21
+58300    22
+58301    23
+58302     0
+58303     1
+58304     2
+Name: hour, dtype: int64
+df_stamp columns after adding minute: Index(['date', 'month', 'day', 'weekday', 'hour', 'minute'], dtype='object')
+df_stamp columns before drop: Index(['date', 'month', 'day', 'weekday', 'hour', 'minute'], dtype='object')
+Before normalization:
+       month  day  weekday  hour  minute
+58285      8   25        2     7       0
+58286      8   25        2     8       0
+58287      8   25        2     9       0
+58288      8   25        2    10       0
+58289      8   25        2    11       0
+After normalization:
+data_stamp shape: (8327, 5)
+data_stamp example:
+ [[ 8 25  2  7  0]
+ [ 8 25  2  8  0]
+ [ 8 25  2  9  0]
+ [ 8 25  2 10  0]
+ [ 8 25  2 11  0]]
+Dataset split: 1, border1: 58285, border2: 66612
+data_x shape: (8327, 10), data_y shape: (8327, 10), data_stamp shape: (8327, 5)
+data_stamp shape: (8327, 5)
+data_stamp example:
+ [[ 8 25  2  7  0]
+ [ 8 25  2  8  0]
+ [ 8 25  2  9  0]
+ [ 8 25  2 10  0]
+ [ 8 25  2 11  0]]
+df_stamp columns: Index(['date', 'month', 'day', 'weekday', 'hour', 'minute'], dtype='object')
+df_stamp head:
+                      date  month  day  weekday  hour  minute
+58285 2021-08-25 07:00:00      8   25        2     7       0
+58286 2021-08-25 08:00:00      8   25        2     8       0
+58287 2021-08-25 09:00:00      8   25        2     9       0
+58288 2021-08-25 10:00:00      8   25        2    10       0
+58289 2021-08-25 11:00:00      8   25        2    11       0
+Original hour values:
+66612     5
+66613     6
+66614     7
+66615     8
+66616     9
+66617    10
+66618    11
+66619    12
+66620    13
+66621    14
+66622    15
+66623    16
+66624    17
+66625    18
+66626    19
+66627    20
+66628    21
+66629    22
+66630    23
+66631     0
+Name: hour, dtype: int64
+df_stamp columns after adding minute: Index(['date', 'month', 'day', 'weekday', 'hour', 'minute'], dtype='object')
+df_stamp columns before drop: Index(['date', 'month', 'day', 'weekday', 'hour', 'minute'], dtype='object')
+Before normalization:
+       month  day  weekday  hour  minute
+66612      8    7        6     5       0
+66613      8    7        6     6       0
+66614      8    7        6     7       0
+66615      8    7        6     8       0
+66616      8    7        6     9       0
+After normalization:
+data_stamp shape: (16653, 5)
+data_stamp example:
+ [[8 7 6 5 0]
+ [8 7 6 6 0]
+ [8 7 6 7 0]
+ [8 7 6 8 0]
+ [8 7 6 9 0]]
+Dataset split: 2, border1: 66612, border2: 83265
+data_x shape: (16653, 10), data_y shape: (16653, 10), data_stamp shape: (16653, 5)
+data_stamp shape: (16653, 5)
+data_stamp example:
+ [[8 7 6 5 0]
+ [8 7 6 6 0]
+ [8 7 6 7 0]
+ [8 7 6 8 0]
+ [8 7 6 9 0]]
+df_stamp columns: Index(['date', 'month', 'day', 'weekday', 'hour', 'minute'], dtype='object')
+df_stamp head:
+                      date  month  day  weekday  hour  minute
+66612 2022-08-07 05:00:00      8    7        6     5       0
+66613 2022-08-07 06:00:00      8    7        6     6       0
+66614 2022-08-07 07:00:00      8    7        6     7       0
+66615 2022-08-07 08:00:00      8    7        6     8       0
+66616 2022-08-07 09:00:00      8    7        6     9       0
+MODEL:  STAGNN_stamp
