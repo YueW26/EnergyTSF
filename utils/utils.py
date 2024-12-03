@@ -70,17 +70,16 @@ def evaluate_metric(model, data_iter, opt):
                     x, y = x.cuda(), y.cuda()
                     x = x.type(torch.cuda.FloatTensor)
                     y = y.type(torch.cuda.FloatTensor)
-                    y_pred = predict(model, x, y, opt).permute(
-                        0, 3, 2, 1).reshape(-1, 228)
+                    y_pred = predict(model, x, y, opt)#.permute(0, 3, 2, 1).reshape(-1, opt.n_route)
 
-                    y_pred = scaler.inverse_transform(
-                        y_pred.cpu().numpy()).reshape(-1, 1, 12, 228)
-                    y = scaler.inverse_transform(
-                        y.permute(0, 3, 2, 1).reshape(-1, 228).cpu().numpy()).reshape(-1, 1, 12, 228)
-
+                    # y_pred = scaler.inverse_transform(
+                    #     y_pred.cpu().numpy()).reshape(-1, 1, 12, opt.n_route)
+                    # y = scaler.inverse_transform(
+                    #     y.permute(0, 3, 2, 1).reshape(-1, opt.n_route).cpu().numpy()).reshape(-1, 1, 12, opt.n_route)
+                    
                     for i in range(length):
-                        y_pred_select = y_pred[:, :, 3 * i + 2, :].reshape(-1)
-                        y_select = y[:, :, 3 * i + 2, :].reshape(-1)
+                        y_pred_select = y_pred[:, :, 3 * i + 2, :].reshape(-1).cpu().numpy()
+                        y_select = y[:, :, 3 * i + 2, :].reshape(-1).cpu().numpy()
                         d = np.abs(y_select - y_pred_select)
 
                         y_pred_select = torch.from_numpy(y_pred_select)
@@ -104,17 +103,18 @@ def evaluate_metric(model, data_iter, opt):
                     x = x.type(torch.cuda.FloatTensor)
                     stamp = stamp.type(torch.cuda.LongTensor)
                     y = y.type(torch.cuda.FloatTensor)
-                    y_pred = predict_stamp(model, x, stamp, y, opt).permute(
-                        0, 3, 2, 1).reshape(-1, 228)
+                    y_pred = predict_stamp(model, x, stamp, y, opt)#.permute(0, 3, 2, 1).reshape(-1, opt.n_route)
 
-                    y_pred = scaler.inverse_transform(
-                        y_pred.cpu().numpy()).reshape(-1, 1, 12, 228)
-                    y = scaler.inverse_transform(
-                        y.permute(0, 3, 2, 1).reshape(-1, 228).cpu().numpy()).reshape(-1, 1, 12, 228)
+                    # y_pred = scaler.inverse_transform(
+                    #     y_pred.cpu().numpy()).reshape(-1, 1, 12, opt.n_route)
+                    # y = scaler.inverse_transform(
+                    #     y.permute(0, 3, 2, 1).reshape(-1, opt.n_route).cpu().numpy()).reshape(-1, 1, 12, opt.n_route)
+                    # y_pred = y_pred.reshape(-1, 1, 12, opt.n_route)
+                    # y = y.permute(0, 3, 2, 1).reshape(-1, opt.n_route)#.reshape(-1, 1, 12, opt.n_route)
 
                     for i in range(length):
-                        y_pred_select = y_pred[:, :, 3 * i + 2, :].reshape(-1)
-                        y_select = y[:, :, 3 * i + 2, :].reshape(-1)
+                        y_pred_select = y_pred[:, :, 3 * i + 2, :].reshape(-1).cpu().numpy()
+                        y_select = y[:, :, 3 * i + 2, :].reshape(-1).cpu().numpy()
                         d = np.abs(y_select - y_pred_select)
 
                         y_pred_select = torch.from_numpy(y_pred_select)
@@ -137,17 +137,16 @@ def evaluate_metric(model, data_iter, opt):
                 x, y = x.cuda(), y.cuda()
                 x = x.type(torch.cuda.FloatTensor)
                 y = y.type(torch.cuda.FloatTensor)
-                y_pred = predict(model, x, y, opt).permute(
-                    0, 3, 2, 1).reshape(-1, 228)
+                y_pred = predict(model, x, y, opt)#.permute(0, 3, 2, 1).reshape(-1, opt.n_route)
 
-                y_pred = scaler.inverse_transform(
-                    y_pred.cpu().numpy()).reshape(-1, 1, 12, 228)
-                y = scaler.inverse_transform(
-                    y.permute(0, 3, 2, 1).reshape(-1, 228).cpu().numpy()).reshape(-1, 1, 12, 228)
-
+                # y_pred = scaler.inverse_transform(
+                #     y_pred.cpu().numpy()).reshape(-1, 1, 12, opt.n_route)
+                # y = scaler.inverse_transform(
+                #     y.permute(0, 3, 2, 1).reshape(-1, opt.n_route).cpu().numpy()).reshape(-1, 1, 12, opt.n_route)
+                
                 for i in range(length):
-                    y_pred_select = y_pred[:, :, 3 * i + 2, :].reshape(-1)
-                    y_select = y[:, :, 3 * i + 2, :].reshape(-1)
+                    y_pred_select = y_pred[:, :, 3 * i + 2, :].reshape(-1).cpu().numpy()
+                    y_select = y[:, :, 3 * i + 2, :].reshape(-1).cpu().numpy()
                     d = np.abs(y_select - y_pred_select)
 
                     y_pred_select = torch.from_numpy(y_pred_select)
@@ -299,6 +298,7 @@ def weight_matrix_nl(file_path, sigma2=0.1, epsilon=0.1, scaling=True):
         return W
     else:
         return W
+    
 def vendermonde(S,degree):
     m = S.shape[0]
     V = np.zeros((m,degree+1))

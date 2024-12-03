@@ -214,7 +214,7 @@ def main(runid):
     # Test data
     outputs = []
     realy = torch.tensor(dataloader['test_loader'].dataset.data_y, dtype=torch.float32).to(device)
-    realy = realy.transpose(1, 3)[:, 0, :, :]
+    realy = realy.unsqueeze(1).transpose(2, 3)[:, 0, :, :]
 
     for iter, (x, y, x_mark, y_mark) in enumerate(dataloader['test_loader']):
         testx = torch.tensor(x, dtype=torch.float32).to(device).unsqueeze(1).transpose(2, 3)

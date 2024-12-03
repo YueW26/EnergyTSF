@@ -10,8 +10,9 @@ from utils.timefeatures import time_features
 class Dataset_Opennem(Dataset_Custom):
     def __init__(self, root_path, flag='train', size=None,
                  features='M', data_path='Germany_processed_0.csv',
-                 target='Fossil Gas  - Actual Aggregated [MW]', scale=True, timeenc=0, freq='month', seasonal_patterns=None):
+                 target='Fossil Gas  - Actual Aggregated [MW]', scale=True, timeenc=0, freq='month', seasonal_patterns=None, args=None):
         super().__init__(root_path, flag, size, features, data_path, target, scale, timeenc, freq, seasonal_patterns)
+        self.args = args
 
     def __read_data__(self):
         self.scaler = StandardScaler()
@@ -42,10 +43,6 @@ class Dataset_Opennem(Dataset_Custom):
 
         # 调试信息：检查调整后的列顺序
         #print(f"Reordered columns: {df_raw.columns.tolist()}")
-
-
-
-
 
         # Handle NaN values
         if df_raw.isnull().sum().sum() > 0:
@@ -125,7 +122,6 @@ class Dataset_Opennem(Dataset_Custom):
         print("df_stamp columns:", df_stamp.columns)
         print("df_stamp head:\n", df_stamp.head())
 
-
         # 检查长度是否一致
         assert len(self.data_x) == len(self.data_stamp), "data_x 和 data_stamp 长度不一致！"
         assert len(self.data_y) == len(self.data_stamp), "data_y 和 data_stamp 长度不一致！"
@@ -163,7 +159,12 @@ class Dataset_Opennem(Dataset_Custom):
         seq_x_mark_dec = seq_y_mark[:self.label_len]
 
         #return seq_x, seq_y, seq_x_mark, seq_y_mark, seq_x_dec, seq_x_mark_dec
-        return seq_x, seq_y, seq_x_mark, seq_y_mark
+        if self.args.stamp_path is not None:
+            stamp = np.load(self.args.stamp_path)
+            # _, stamp, _ = transform_time(self.dataset, train, self.args, start, sub_label)
+            return seq_x, seq_y, seq_x_mark, seq_y_mark, stamp
+        else:
+            return seq_x, seq_y, seq_x_mark, seq_y_mark
 
     def __len__(self):
         length = len(self.data_x) - self.seq_len - self.pred_len + 1
