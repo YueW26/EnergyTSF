@@ -203,7 +203,7 @@ def train(**kwargs):
             print('epoch', epoch, ' ', name, ', train loss:',
                   loss_sum / n, ', validation loss:', val_loss)
             
-            if epoch>200 and val_loss < min_val_loss**0.999:
+            if epoch > 3:# and val_loss < min_val_loss**0.999:
                 if val_loss<min_val_loss:
                     min_val_loss = val_loss
                 print(

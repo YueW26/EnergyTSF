@@ -12,7 +12,7 @@ data_root='/home/kit/aifb/cc7738/scratch/EnergyTSF/datasets' #Directory to the M
 stamp_path="${data_root}/time_stamp.npy"
 #training model
 python3 /home/kit/aifb/cc7738/scratch/EnergyTSF/TPGNN/main_tpgnn.py train --device=0 --n_route=10 --n_his=12 --n_pred=12 --n_train=34 --n_val=5 --n_test=5 --mode=1 --name='PeMS'\
-    --data_path="${data_root}/V_France_processed_0.csv" --adj_matrix_path="${data_root}/W_France_processed_0.csv" --seq_in_len=12 --seq_out_len=12 --stamp_path=$stamp_path --epochs=20
+    --data_path="${data_root}/V_France_processed_0.csv" --adj_matrix_path="${data_root}/W_France_processed_0.csv" --seq_in_len=12 --seq_out_len=12 --stamp_path=$stamp_path --epochs=5
 
 
 
